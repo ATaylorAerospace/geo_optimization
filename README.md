@@ -1,14 +1,8 @@
-# geo_optimization
-optimize the parameters for maximizing outlet thrust in a geostationary orbit (GEO) with minimal voltage
-# Geo-Orbit Thruster Optimization Script
+# Geo-Orbit Thruster Optimization 
 
 ## Overview
-This Python script is designed to optimize the parameters for maximizing outlet thrust in a geostationary orbit (GEO) with minimal voltage. It focuses on finding the best combination of specific impulse and mass flow rate to achieve the highest thrust with the lowest power consumption, without utilizing the design principles of the Pocket Rocket.
+This script is designed to optimize the parameters for maximizing outlet thrust in GEO with minimal voltage. It focuses on finding the best combination of specific impulse and mass flow rate to achieve the highest thrust with the lowest power consumption.
 
-## Features
-- Calculation of thrust based on specific impulse and mass flow rate.
-- Estimation of power consumption for different thruster configurations.
-- Optimization algorithm to find the best parameters for maximum thrust and minimal power usage.
 - Visualization of the thrust vs specific impulse relationship.
 
 ## Requirements
