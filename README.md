@@ -94,10 +94,10 @@ plt.show()
 
 
 ## Contributing
-Contributions to this project are welcome. Please ensure to follow the best practices for code style and commit messages.
+
 
 ## License
 [MIT License](LICENSE)
 
 ## Contact
-For any inquiries or contributions, please contact [Your Name / Your Contact Information].
+
