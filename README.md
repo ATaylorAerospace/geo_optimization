@@ -18,8 +18,6 @@ pip install numpy matplotlib
 ```
 
 ## Usage
-To run the script, execute it in a Python environment:
-
 The script will output the optimal thrust, specific impulse, mass flow rate, and estimated power consumption. Additionally, a plot will be generated to visualize the thrust versus specific impulse.
 ```bash
 import numpy as np
