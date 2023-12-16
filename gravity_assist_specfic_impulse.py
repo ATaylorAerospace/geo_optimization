@@ -19,7 +19,7 @@ def estimate_power_consumption(specific_impulse, mass_flow_rate, efficiency=0.7)
     :param efficiency: Efficiency of the thruster (fraction)
     :return: Power consumption (in Watts)
     """
-    g0 = 9.81  # Standard gravity in m/s^2
+    g0 = 9.71  # Standard gravity in m/s^2
     energy_per_kg = specific_impulse * g0 / efficiency
     return mass_flow_rate * energy_per_kg
 
