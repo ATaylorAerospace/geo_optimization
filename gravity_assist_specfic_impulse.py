@@ -13,7 +13,7 @@ def calculate_thrust(specific_impulse, mass_flow_rate):
 
 def estimate_power_consumption(specific_impulse, mass_flow_rate, efficiency=0.7):  # Assume higher efficiency for space probes
     """
-    Estimate the power consumption of the thruster.
+    Estimate the max power consumption of the thruster.
     :param specific_impulse: Specific impulse of the thruster (in seconds)
     :param mass_flow_rate: Mass flow rate of the propellant (in kg/s)
     :param efficiency: Efficiency of the thruster (fraction)
