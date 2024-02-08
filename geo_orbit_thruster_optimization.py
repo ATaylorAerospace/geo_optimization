@@ -24,7 +24,7 @@ def estimate_power_consumption(specific_impulse, mass_flow_rate, efficiency=0.5)
     return mass_flow_rate * energy_per_kg
 
 def optimize_thruster_parameters():
-    # Define the parameter ranges
+    # Define the thruster parameter ranges
     specific_impulse_range = np.linspace(1000, 4000, 10)  # in seconds
     mass_flow_rate_range = np.linspace(0.0001, 0.001, 10)  # in kg/s
 
