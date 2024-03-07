@@ -5,8 +5,8 @@ def calculate_thrust(specific_impulse, mass_flow_rate):
     """
     Calculate the thrust given specific impulse and mass flow rate.
     :param specific_impulse: Specific impulse of the thruster (in seconds)
-    :param mass_flow_rate: Mass flow rate of the propellant (in kg/s)
-    :return: Thrust (in Newtons)
+    :param mass_flow_rate: Mass flow rate of the propellant 
+    :return: Thrust (add in Newtons)
     """
     g0 = 9.81  # Standard gravity in m/s^2
     return specific_impulse * mass_flow_rate * g0
