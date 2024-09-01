@@ -18,7 +18,7 @@ end
 % Function to optimize thruster parameters with gravity assist
 function results = optimize_thruster_parameters(gravity_assist_multiplier)
     % Set up parameter ranges
-    specific_impulse_range = 2000:500:5000;
+    specific_impulse_range = 2000:500:4000;
     mass_flow_rate_range = 0.00005:0.00005:0.0005;
 
     % Calculate thrust and power consumption for each combination
