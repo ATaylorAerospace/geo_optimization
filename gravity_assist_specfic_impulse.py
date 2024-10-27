@@ -1,4 +1,4 @@
-import numpy as np
+# import numpy as np
 
 # Constants
 G0 = 9.81  # Standard gravity, m/s^2
@@ -26,24 +26,38 @@ def estimate_power_consumption(specific_impulse, mass_flow_rate, efficiency=0.7)
     return mass_flow_rate * energy_per_kg
 
 def optimize_thruster_parameters(gravity_assist_multiplier=1.1):
-    """Find optimal thruster parameters to maximize thrust and minimize power consumption.
+    """Find optimal thruster parameters to maximize thrust-to-power ratio.
     Parameters:
     - gravity_assist_multiplier: Multiplier to simulate gravity assist effect (dimensionless, default=1.1).
     Returns:
     - Dictionary containing optimal values for thrust, specific impulse, mass flow rate, and power consumption.
     """
-    specific_impulse_range = np.linspace(2000, 5000, 10)
-    mass_flow_rate_range = np.linspace(0.00005, 0.0005, 10)
+    specific_impulse_range = np.linspace(2000, 5000, 50)
+    mass_flow_rate_range = np.linspace(0.00005, 0.0005, 50)
 
-    thrusts = calculate_thrust(specific_impulse_range[:, None], mass_flow_rate_range) * gravity_assist_multiplier
-    power_consumptions = estimate_power_consumption(specific_impulse_range[:, None], mass_flow_rate_range)
+    spi_grid, mass_grid = np.meshgrid(specific_impulse_range, mass_flow_rate_range)
+    spi_values = spi_grid.ravel()
+    mass_values = mass_grid.ravel()
 
-    optimal_index = np.unravel_index(np.argmax(thrusts - power_consumptions), thrusts.shape)
+    # Vectorized calculation of thrust and power consumption
+    thrust_values = calculate_thrust(spi_values, mass_values) * gravity_assist_multiplier
+    power_values = estimate_power_consumption(spi_values, mass_values)
+
+    # Calculate thrust-to-power ratio and find the optimal index
+    ratio_values = thrust_values / power_values
+    optimal_idx = np.argmax(ratio_values)
+
+    # Extract optimal parameters
+    optimal_spi = spi_values[optimal_idx]
+    optimal_mass = mass_values[optimal_idx]
+    optimal_thrust = thrust_values[optimal_idx]
+    optimal_power = power_values[optimal_idx]
+
     return {
-        "Optimal Thrust": thrusts[optimal_index],
-        "Optimal Specific Impulse": specific_impulse_range[optimal_index[0]],
-        "Optimal Mass Flow Rate": mass_flow_rate_range[optimal_index[1]],
-        "Estimated Power Consumption": power_consumptions[optimal_index]
+        "Optimal Thrust": optimal_thrust,
+        "Optimal Specific Impulse": optimal_spi,
+        "Optimal Mass Flow Rate": optimal_mass,
+        "Estimated Power Consumption": optimal_power
     }
 
 # Running the optimization
