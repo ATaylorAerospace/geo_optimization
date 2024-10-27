@@ -21,27 +21,31 @@ function results = optimize_thruster_parameters(gravity_assist_multiplier)
     specific_impulse_range = 2000:500:4000;
     mass_flow_rate_range = 0.00005:0.00005:0.0005;
 
-    % Calculate thrust and power consumption for each combination
-    thrust_matrix = zeros(length(specific_impulse_range), length(mass_flow_rate_range));
-    power_matrix = zeros(length(specific_impulse_range), length(mass_flow_rate_range));
+    % Preallocate thrust and power matrices for better performance
+    [spi_grid, mass_grid] = meshgrid(specific_impulse_range, mass_flow_rate_range);
+    spi_values = spi_grid(:);
+    mass_values = mass_grid(:);
     
-    for i = 1:length(specific_impulse_range)
-        for j = 1:length(mass_flow_rate_range)
-            thrust_matrix(i, j) = calculate_thrust(specific_impulse_range(i), mass_flow_rate_range(j)) * gravity_assist_multiplier;
-            power_matrix(i, j) = estimate_power_consumption(specific_impulse_range(i), mass_flow_rate_range(j));
-        end
-    end
+    % Vectorized calculation of thrust and power consumption
+    thrust_values = arrayfun(@(spi, mass) calculate_thrust(spi, mass) * gravity_assist_multiplier, spi_values, mass_values);
+    power_values = arrayfun(@(spi, mass) estimate_power_consumption(spi, mass, 0.9), spi_values, mass_values); % Assuming efficiency of 0.9
 
-    % Find the maximum value in the matrices considering both thrust and power consumption
-    [~, idx] = max(thrust_matrix - power_matrix);
-    optimal_index = indices(idx);
-    
-    % Extract the optimal parameters
+    % Calculate thrust-to-power ratio
+    ratio_values = thrust_values ./ power_values;
+    [~, optimal_idx] = max(ratio_values);
+
+    % Extract optimal parameters
+    optimal_spi = spi_values(optimal_idx);
+    optimal_mass = mass_values(optimal_idx);
+    optimal_thrust = thrust_values(optimal_idx);
+    optimal_power = power_values(optimal_idx);
+
+    % Store results in a container
     results = containers.Map('KeyType', 'string', 'ValueType', 'double');
-    results('Optimal Thrust') = thrust_matrix(optimal_index(1), optimal_index(2));
-    results('Optimal Specific Impulse') = specific_impulse_range(optimal_index(1));
-    results('Optimal Mass Flow Rate') = mass_flow_rate_range(optimal_index(2));
-    results('Estimated Power Consumption') = power_matrix(optimal_index(1), optimal_index(2));
+    results('Optimal Thrust') = optimal_thrust;
+    results('Optimal Specific Impulse') = optimal_spi;
+    results('Optimal Mass Flow Rate') = optimal_mass;
+    results('Estimated Power Consumption') = optimal_power;
 end
 
 % Running the optimization with gravity assist
@@ -56,15 +60,17 @@ fprintf('Estimated Power Consumption: %.2f Watts\n', results('Estimated Power Co
 
 % 2D Plot of Thrust vs. Specific Impulse
 figure
-scatter(results('Optimal Specific Impulse'), results('Optimal Thrust'), 'r', 'MarkerFace', 'filled');
+scatter(results('Optimal Specific Impulse'), results('Optimal Thrust'), 'r', 'filled');
 hold on
 
-theta = linspace(0, pi/2);
-for i = 1:length(specific_impulse_range)
-    plot(specific_impulse_range(i), calculate_thrust(specific_impulse_range(i), mass_flow_rate_range), 'b');
+% Plotting thrust curves for visualization
+for spi = specific_impulse_range
+    thrust_curve = arrayfun(@(mass) calculate_thrust(spi, mass), mass_flow_rate_range);
+    plot(mass_flow_rate_range, thrust_curve, 'b');
 end
 
-xlabel('Specific Impulse (s)');
+xlabel('Mass Flow Rate (kg/s)');
 ylabel('Thrust (N)');
-title('Thrust vs Specific Impulse');
+title('Thrust vs Mass Flow Rate for Different Specific Impulses');
 grid on;
+hold off;
