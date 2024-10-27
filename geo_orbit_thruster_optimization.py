@@ -19,31 +19,31 @@ def estimate_power_consumption(specific_impulse, mass_flow_rate, efficiency=0.5)
     :param efficiency: Efficiency of the thruster (fraction)
     :return: Power consumption in Watts
     """
-    g0 = 9.81  # Standard gravity in m/s^4
+    g0 = 9.81  # Standard gravity in m/s^2
     energy_per_kg = specific_impulse * g0 / efficiency
     return mass_flow_rate * energy_per_kg
 
 def optimize_thruster_parameters():
-    specific_impulse_range = np.linspace(1000, 4000, 10)  # in seconds
-    mass_flow_rate_range = np.linspace(0.0001, 0.001, 10)  # in kg/s
+    specific_impulse_range = np.linspace(1000, 4000, 50)  # Increased resolution in seconds
+    mass_flow_rate_range = np.linspace(0.0001, 0.001, 50)  # Increased resolution in kg/s
 
-    optimal_thrust = 0
-    optimal_specific_impulse = 0
-    optimal_mass_flow_rate = 0
-    optimal_power_consumption = float('inf')
-    optimal_efficiency = 0  # Assuming efficiency varies and is part of optimization
+    spi_grid, mass_grid = np.meshgrid(specific_impulse_range, mass_flow_rate_range)
+    spi_values = spi_grid.ravel()
+    mass_values = mass_grid.ravel()
 
-    for specific_impulse in specific_impulse_range:
-        for mass_flow_rate in mass_flow_rate_range:
-            thrust = calculate_thrust(specific_impulse, mass_flow_rate)
-            power_consumption = estimate_power_consumption(specific_impulse, mass_flow_rate)
+    # Vectorized calculation of thrust and power consumption
+    thrust_values = calculate_thrust(spi_values, mass_values)
+    power_values = estimate_power_consumption(spi_values, mass_values)
 
-            # Define an optimization criterion, e.g., maximizing thrust/power_consumption ratio
-            if thrust / power_consumption > optimal_thrust / optimal_power_consumption:
-                optimal_thrust = thrust
-                optimal_specific_impulse = specific_impulse
-                optimal_mass_flow_rate = mass_flow_rate
-                optimal_power_consumption = power_consumption
+    # Calculate thrust-to-power ratio and find the optimal index
+    ratio_values = thrust_values / power_values
+    optimal_idx = np.argmax(ratio_values)
+
+    # Extract optimal parameters
+    optimal_thrust = thrust_values[optimal_idx]
+    optimal_specific_impulse = spi_values[optimal_idx]
+    optimal_mass_flow_rate = mass_values[optimal_idx]
+    optimal_power_consumption = power_values[optimal_idx]
 
     return optimal_thrust, optimal_specific_impulse, optimal_mass_flow_rate, optimal_power_consumption
 
