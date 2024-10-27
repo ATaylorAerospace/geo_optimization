@@ -27,39 +27,42 @@ function power = estimate_power_consumption(specific_impulse, mass_flow_rate, ef
 end
 
 % Function to optimize thruster parameters
-function [optimal_thrust, optimal_spi, optimal_mass] = ...
+function [optimal_thrust, optimal_spi, optimal_mass, optimal_power] = ...
     optimize_thruster_parameters(efficiency)
     % Optimize thruster parameters to find the maximum thrust/power_consumption ratio
     
-    specific_impulse_range = linspace(1000, 4000, 10); % in seconds
-    mass_flow_rate_range = linspace(0.0001, 0.001, 10); % in kg/s
+    specific_impulse_range = linspace(1000, 4000, 50); % Increased resolution in seconds
+    mass_flow_rate_range = linspace(0.0001, 0.001, 50); % Increased resolution in kg/s
     
     optimal_thrust = 0;
     optimal_spi = 0;
     optimal_mass = 0;
     optimal_power = inf;
     
-    for i = 1:length(specific_impulse_range)
-        for j = 1:length(mass_flow_rate_range)
-            spi = specific_impulse_range(i);
-            mass = mass_flow_rate_range(j);
-            thrust_value = calculate_thrust(spi, mass);
-            power_value = estimate_power_consumption(spi, mass, efficiency);
-            
-            % Maximize thrust to power_consumption ratio
-            if thrust_value / power_value > optimal_thrust / optimal_power:
-                optimal_thrust = thrust_value;
-                optimal_spi = spi;
-                optimal_mass = mass;
-                optimal_power = power_value;
-            end
+    % Vectorized optimization for better performance
+    [spi_grid, mass_grid] = meshgrid(specific_impulse_range, mass_flow_rate_range);
+    spi_values = spi_grid(:);
+    mass_values = mass_grid(:);
+    
+    for idx = 1:length(spi_values)
+        spi = spi_values(idx);
+        mass = mass_values(idx);
+        thrust_value = calculate_thrust(spi, mass);
+        power_value = estimate_power_consumption(spi, mass, efficiency);
+        
+        % Maximize thrust to power consumption ratio
+        if thrust_value / power_value > optimal_thrust / optimal_power
+            optimal_thrust = thrust_value;
+            optimal_spi = spi;
+            optimal_mass = mass;
+            optimal_power = power_value;
         end
     end
 end
 
 % Run the optimization
 efficiency = input('Enter thruster efficiency (between 0 and 1): ');
-[optimal_thrust, optimal_spi, optimal_mass] = optimize_thruster_parameters(efficiency);
+[optimal_thrust, optimal_spi, optimal_mass, optimal_power] = optimize_thruster_parameters(efficiency);
 
 % Displaying the results
 fprintf('Optimal Thrust: %.2f N\n', optimal_thrust);
@@ -69,18 +72,16 @@ fprintf('Estimated Power Consumption: %.2f Watts\n', optimal_power);
 
 % Optional Plot
 figure
-scatter(optimal_spi, optimal_thrust, 'r', 'MarkerFace', 'filled');
+scatter(optimal_spi, optimal_thrust, 'r', 'filled');
 xlabel('Specific Impulse (s)');
 ylabel('Thrust (N)');
 title('Thrust vs Specific Impulse');
 grid on;
-hold on
-theta = linspace(0, pi/2);
-for i = 1:length(specific_impulse_range)
-    for j = 1:length(mass_flow_rate_range)
-        thrust_val = calculate_thrust(specific_impulse_range(i), mass_flow_rate_range(j));
-        plot(specific_impulse_range(i), thrust_val, 'b');
-    end
-end
-legend('Optimal Point', 'Thrust Curves');
-hold off
+hold on;
+
+% Plot thrust curves for visualization
+[specific_impulse_range, mass_flow_rate_range] = meshgrid(linspace(1000, 4000, 50), linspace(0.0001, 0.001, 50));
+thrust_values = calculate_thrust(specific_impulse_range, mass_flow_rate_range);
+contour(specific_impulse_range, mass_flow_rate_range, thrust_values, 20, 'b');
+legend('Optimal Point', 'Thrust Contours');
+hold off;
