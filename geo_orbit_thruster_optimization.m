@@ -11,6 +11,7 @@ function thrust = calculate_thrust(specific_impulse, mass_flow_rate)
     thrust = specific_impulse * mass_flow_rate * g0;
 end
 
+"""Nominal consumption estimation."""
 % Function to estimate power consumption
 function power = estimate_power_consumption(specific_impulse, mass_flow_rate, efficiency)
     % Estimate the power consumption of the thruster.
@@ -26,6 +27,7 @@ function power = estimate_power_consumption(specific_impulse, mass_flow_rate, ef
     power = mass_flow_rate * energy_per_kg;
 end
 
+"""Nominal thruster parameeters."""
 % Function to optimize thruster parameters
 function [optimal_thrust, optimal_spi, optimal_mass, optimal_power] = ...
     optimize_thruster_parameters(efficiency)
@@ -60,6 +62,7 @@ function [optimal_thrust, optimal_spi, optimal_mass, optimal_power] = ...
     end
 end
 
+"""Full run"""
 % Run the optimization
 efficiency = input('Enter thruster efficiency (between 0 and 1): ');
 [optimal_thrust, optimal_spi, optimal_mass, optimal_power] = optimize_thruster_parameters(efficiency);
