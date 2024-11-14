@@ -1,10 +1,10 @@
-# import numpy as np
+import numpy as np
 
 # Constants
 G0 = 9.81  # Standard gravity, m/s^2
 
 def calculate_thrust(specific_impulse, mass_flow_rate):
-    """Calculate thrust given specific impulse and mass_flow_rate.
+    """Calculate thrust given specific impulse and mass flow rate.
     Parameters:
     - specific_impulse: Specific impulse of the thruster (s).
     - mass_flow_rate: Mass flow rate of the propellant (kg/s).
@@ -22,8 +22,9 @@ def estimate_power_consumption(specific_impulse, mass_flow_rate, efficiency=0.7)
     Returns:
     - Estimated power consumption (W).
     """
-    energy_per_kg = specific_impulse * G0 / efficiency
-    return mass_flow_rate * energy_per_kg
+    V_e = specific_impulse * G0  # Exhaust velocity (m/s)
+    power = 0.5 * mass_flow_rate * V_e**2 / efficiency
+    return power
 
 def optimize_thruster_parameters(gravity_assist_multiplier=1.1):
     """Find optimal thruster parameters to maximize thrust-to-power ratio.
@@ -60,9 +61,10 @@ def optimize_thruster_parameters(gravity_assist_multiplier=1.1):
         "Estimated Power Consumption": optimal_power
     }
 
-# Running the optimization
-optimal_results = optimize_thruster_parameters()
-print(f"Optimal Thrust with Gravity Assist: {optimal_results['Optimal Thrust']} N")
-print(f"Optimal Specific Impulse: {optimal_results['Optimal Specific Impulse']} seconds")
-print(f"Optimal Mass Flow Rate: {optimal_results['Optimal Mass Flow Rate']} kg/s")
-print(f"Estimated Power Consumption: {optimal_results['Estimated Power Consumption']} Watts")
+if __name__ == "__main__":
+    # Running the optimization
+    optimal_results = optimize_thruster_parameters()
+    print(f"Optimal Thrust with Gravity Assist: {optimal_results['Optimal Thrust']:.4f} N")
+    print(f"Optimal Specific Impulse: {optimal_results['Optimal Specific Impulse']:.2f} seconds")
+    print(f"Optimal Mass Flow Rate: {optimal_results['Optimal Mass Flow Rate']:.6f} kg/s")
+    print(f"Estimated Power Consumption: {optimal_results['Estimated Power Consumption']:.2f} Watts")
