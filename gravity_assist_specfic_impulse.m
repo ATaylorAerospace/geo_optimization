@@ -15,6 +15,7 @@ function power = estimate_power_consumption(specific_impulse, mass_flow_rate, ef
     power = mass_flow_rate * energy_per_kg;
 end
 
+"""Nominal parameters"""
 % Function to optimize thruster parameters with gravity assist
 function results = optimize_thruster_parameters(gravity_assist_multiplier)
     % Set up parameter ranges
@@ -30,6 +31,7 @@ function results = optimize_thruster_parameters(gravity_assist_multiplier)
     thrust_values = arrayfun(@(spi, mass) calculate_thrust(spi, mass) * gravity_assist_multiplier, spi_values, mass_values);
     power_values = arrayfun(@(spi, mass) estimate_power_consumption(spi, mass, 0.9), spi_values, mass_values); % Assuming efficiency of 0.9
 
+    """Nominal ratio"""
     % Calculate thrust-to-power ratio
     ratio_values = thrust_values ./ power_values;
     [~, optimal_idx] = max(ratio_values);
