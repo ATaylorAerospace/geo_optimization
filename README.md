@@ -106,5 +106,17 @@ The estimate_power_consumption function has been updated to use a more accurate 
 ## License
 [MIT License](LICENSE)
 
-## Contact
+## Citation 
+
+If you use this repository in your research, please cite it as:
+
+```bibtex
+@misc{ATaylor_GEOOptimization_2024,
+  author       = {A. Taylor},
+  title        = {Geo Optimization},
+  year         = {2024},
+  url          = {[https://github.com/ATaylorAerospace/geo_optimization]},
+  note         = {Accessed: YYYY-MM-DD}
+}
+
 
