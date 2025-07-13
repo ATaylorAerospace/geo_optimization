@@ -5,7 +5,7 @@ function thrust = calculate_thrust(specific_impulse, mass_flow_rate)
     %   specific_impulse: Specific impulse of the thruster (s)
     %   mass_flow_rate: Mass flow rate of the propellant (kg/s)
     % Output:
-    %   thrust: Thrust in Newtons
+    %   thrust: thrust in newtons
     
     g0 = 9.81; % Standard gravity in m/s^2
     thrust = specific_impulse * mass_flow_rate * g0;
